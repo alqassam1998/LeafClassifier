@@ -4,6 +4,10 @@ import os
 import numpy as np
 import random
 
+# function to open images from the same folder
+def pathList(path):
+    files = [i for i in os.listdir(path) if i.lower().endswith(('png', 'jpg', 'jpeg'))]
+    return [os.path.join(path, file) for file in files]
 
 def segmentation(image_paths):
     
@@ -73,18 +77,18 @@ def colorDetection(image_paths):
         if (45 <= array_hsv_mean[0][0]<= 85) and (40 <= array_hsv_mean[1][0]<= 255) and (40 <= array_hsv_mean[2][0]<= 255):
             status = 'The leaf is healthy'
             filename = os.path.basename(img_path)
-            if not os.path.exists("detected_healthy_leaves/"): 
-                os.makedirs("detected_healthy_leaves/")
-            save_path = os.path.join("detected_healthy_leaves/", filename)
+            if not os.path.exists("detected_healthy_leaves_color/"): 
+                os.makedirs("detected_healthy_leaves_color/")
+            save_path = os.path.join("detected_healthy_leaves_color/", filename)
             cv2.imwrite(save_path, image)
             
                         
         else: 
             status = 'The leaf is damaged'
             filename = os.path.basename(img_path)
-            if not os.path.exists("detected_damaged_leaves/"): 
-                os.makedirs("detected_damaged_leaves/")
-            save_path = os.path.join("detected_damaged_leaves/", filename)
+            if not os.path.exists("detected_damaged_leaves_color/"): 
+                os.makedirs("detected_damaged_leaves_color/")
+            save_path = os.path.join("detected_damaged_leaves_color/", filename)
             cv2.imwrite(save_path, image)
             
 
@@ -136,17 +140,17 @@ def findContour(image_paths):
         if spots == 0:
             status = 'The leaf is healthy'
             filename = os.path.basename(img_path)
-            if not os.path.exists("detected_healthy_leaves/"): 
-                os.makedirs("detected_healthy_leaves/")
-            save_path = os.path.join("detected_healthy_leaves/", filename)
+            if not os.path.exists("detected_healthy_leaves_contour/"): 
+                os.makedirs("detected_healthy_leaves_contour/")
+            save_path = os.path.join("detected_healthy_leaves_contour/", filename)
             cv2.imwrite(save_path, leaf_only_bgr)
 
         else:
             status = 'The leaf is damaged'
             filename = os.path.basename(img_path)
-            if not os.path.exists("detected_damaged_leaves/"): 
-                os.makedirs("detected_damaged_leaves/")
-            save_path = os.path.join("detected_damaged_leaves/", filename)
+            if not os.path.exists("detected_damaged_leaves_contour/"): 
+                os.makedirs("detected_damaged_leaves_contour/")
+            save_path = os.path.join("detected_damaged_leaves_contour", filename)
             cv2.imwrite(save_path, leaf_only_bgr)
 
         path_list[save_path]= status
@@ -157,11 +161,18 @@ def findContour(image_paths):
 
 
 
-# folder_path = "raw/segmented/Peach___Bacterial_spot"
-# segmented_list = segmentation(folder_path)
-# status_leaves = color_detection(segmented_list)
-# if os.listdir("raw/detected_healthy_leaves"):
+# folder_path = pathList("LeafClassifier-main/raw/segmented/Peach___Bacterial_spot")
+# total_images = len(folder_path)
+# accuracy_vector = []
+# #segmented_list = segmentation(folder_path)
+# status_leaves = colorDetection(folder_path)
+# damaged_colordetected_imgs = len(pathList("detected_damaged_leaves_color/"))
+# status_leaves_new = findContour(folder_path)
+# damaged_contourdetected_imgs = len(pathList("detected_damaged_leaves_contour/"))
 
-#     for i in os.listdir("raw/detected_healthy_leaves"):
+# if os.listdir("detected_healthy_leaves_color/"):
+#      status_leaves_new2 = findContour(pathList("detected_healthy_leaves_color/"))
+#      damaged_contourdetected_imgs2 = len(status_leaves_new2)
 
-#         a,b = find_contour()
+# accuracy_vector = [damaged_colordetected_imgs/total_images, damaged_contourdetected_imgs/total_images, (damaged_colordetected_imgs+damaged_contourdetected_imgs2)/total_images]    
+# print(accuracy_vector)
